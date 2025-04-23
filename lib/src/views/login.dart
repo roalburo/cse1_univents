@@ -23,14 +23,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  final List<String> adminEmails = [
-    'roalburo@addu.edu.ph',
-    'aclfilipinas@addu.edu.ph',
-    'jkrlampa@addu.edu.ph',
-    'adgramirez@addu.edu.ph',
-    'pappaasa@addu.edu.ph',
-  ];
-
   void _showNotAdminError() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -47,17 +39,28 @@ class _LoginScreenState extends State<LoginScreen> {
     supabase.auth.onAuthStateChange.listen((data) async {
       final session = data.session;
       final userEmail = session?.user.email ?? '';
-      if (session != null) {
-        if (!userEmail.endsWith('@addu.edu.ph')) {
-          await supabase.auth.signOut();
-          _showEmailError();
-        } else if (!adminEmails.contains(userEmail)) {
-          await supabase.auth.signOut();
-          _showNotAdminError();
-        } else {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => DashboardScreen()),
-          );
-        }
+
+      if (session == null) return;
+
+      if (!userEmail.endsWith('@addu.edu.ph')) {
+        await supabase.auth.signOut();
+        _showEmailError();
+        return;
+      }
+
+      final response = await supabase
+          .from('accounts')
+          .select()
+          .eq('email', userEmail)
+          .maybeSingle();
+
+      final role = response?['role'];
+
+      if (role == 'admin') {
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => DashboardScreen()));
+      } else {
+        await supabase.auth.signOut();
+        _showNotAdminError();
       }
     });
   }
@@ -66,10 +69,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     Size screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      // appBar: AppBar(
-      //   toolbarHeight: 70,
-      //   title: Text("Login"),
-      // ),
       body: Container(
         height: screenSize.height,
         width: screenSize.width,
@@ -99,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Image.asset("assets/google.png", width: 30, height: 30),
                       SizedBox(width: 10),
-                      Text("Logins"),
+                      Text("Login"),
                     ],
                   )
                 ),
