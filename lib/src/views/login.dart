@@ -99,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Image.asset("assets/google.png", width: 30, height: 30),
                       SizedBox(width: 10),
-                      Text("Login"),
+                      Text("Logins"),
                     ],
                   )
                 ),
