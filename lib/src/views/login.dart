@@ -161,15 +161,17 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 45,
                             width: 300,
                             child: TextField(
-                            decoration: InputDecoration(
-                              filled: true,
-                              fillColor: Colors.white,
-                              border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide.none,
+                              obscureText: true,
+                              obscuringCharacter: "*",
+                              decoration: InputDecoration(
+                                filled: true,
+                                fillColor: Colors.white,
+                                border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide.none,
+                                ),
+                                contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                               ),
-                              contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                            ),
                             ),
                           ),
                         ],
