@@ -1,5 +1,11 @@
+import 'package:cse1_univents/src/services/data_provider.dart';
+import 'package:cse1_univents/src/views/attendees.dart';
+import 'package:cse1_univents/src/views/dashboard.dart';
+import 'package:cse1_univents/src/views/events.dart';
 import 'package:cse1_univents/src/views/login.dart';
+import 'package:cse1_univents/src/views/organizations.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -7,7 +13,12 @@ void main() async {
     url: 'https://abjnclqznfxeccdjmwkg.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFiam5jbHF6bmZ4ZWNjZGptd2tnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ2MTEyNTIsImV4cCI6MjA2MDE4NzI1Mn0.8vAOC7Vb_-WLMd1dnqR9aWpAzCiZRI_zaVv-yWzr5Jc',
   );
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => DataProvider(),
+      child: MyApp(),
+    )
+  );
 }
 
 final supabase = Supabase.instance.client;
@@ -24,8 +35,16 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: LoginScreen(),
+      // home: LoginScreen(),
       debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        '/': (_) => LoginScreen(),
+        '/dashboard': (_) => DashboardScreen(),
+        '/orgs': (_) => OrganizationsScreen(),
+        '/events': (_) => EventsScreen(),
+        '/attendees': (_) => AttendeesScreen(),
+      },
     );
   }
 }
