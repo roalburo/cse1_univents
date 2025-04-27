@@ -44,11 +44,21 @@ class OrganizationCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   org.name,
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   org.category,
                   style: TextStyle(color: Colors.grey[600]),
+                ),
+                Text(
+                  org.email,
+                ),
+                Text(
+                  org.mobile
+                ),
+                Text(
+                  org.facebook
                 ),
               ],
             ),

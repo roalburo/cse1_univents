@@ -66,7 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: GridView.builder(
           padding: EdgeInsets.all(8),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+            crossAxisCount: 4,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
             childAspectRatio: 3 / 4,
@@ -83,7 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: GridView.builder(
           padding: EdgeInsets.all(8),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+            crossAxisCount: 4,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
             childAspectRatio: 3 / 4,
@@ -100,7 +100,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: GridView.builder(
           padding: EdgeInsets.all(8),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+            crossAxisCount: 5,
             crossAxisSpacing: 8,
             mainAxisSpacing: 8,
             childAspectRatio: 3 / 4,
