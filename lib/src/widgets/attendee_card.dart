@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/attendee_model.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 class AttendeeCard extends StatefulWidget {
   final Attendee attendee;
@@ -76,31 +78,128 @@ class _AttendeeCardState extends State<AttendeeCard> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 6,
-      color: Colors.white.withOpacity(0.95),
+      color: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
+      child: Container(
+      decoration: BoxDecoration(
+      gradient: LinearGradient(
+      colors: [Colors.white, Colors.blueGrey[50]!],
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      ),
+      borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+      children: [
+        Container(
+        width: 8,
+        decoration: BoxDecoration(
+          color: Colors.blue[900],
+          borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12),
+          bottomLeft: Radius.circular(12),
+          ),
+        ),
+        ),
+        SizedBox(width: 8),
+        Expanded(
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.badge, color: Colors.blueAccent, size: 28),
-            const SizedBox(height: 8),
-            Text(
-              isLoading
-                ? "Loading name..."
-                : "Attendee: $fullName",
+          Center(
+          child: Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.black, Colors.blue[900]!],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(height: 6),
-            Text(
-              isLoading
-                ? "Loading event..."
-                : "Event Joined: $eventName",
+            shape: BoxShape.circle,
             ),
-            Text(
-              'Date joined: ${DateFormat('MMM dd, yyyy  hh:mm a').format(widget.attendee.datetimestamp)}'
+            child: CircleAvatar(
+            radius: 30,
+            backgroundColor: Colors.transparent,
+            child: Icon(Icons.person, color: Colors.white, size: 30),
+            ),
+          ),
+          ),
+          const SizedBox(height: 14),
+          Row(
+          children: [
+            Icon(Icons.person, color: Colors.blueGrey, size: 24),
+            const SizedBox(width: 8),
+            RichText(
+            text: TextSpan(
+            text: 'Attendee: ',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold, color: Colors.black),
+            children: [
+            TextSpan(
+              text: isLoading ? "Loading name..." : fullName,
+              style: GoogleFonts.poppins(
+              fontWeight: FontWeight.normal,
+              color: Colors.black),
+            ),
+            ],
+            ),
             ),
           ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+          children: [
+            Icon(Icons.event, color: Colors.blueGrey, size: 24),
+            const SizedBox(width: 8),
+            RichText(
+            text: TextSpan(
+            text: 'Event Joined: ',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold, color: Colors.black),
+            children: [
+            TextSpan(
+              text: isLoading ? "Loading event..." : eventName,
+              style: GoogleFonts.poppins(
+              fontWeight: FontWeight.normal,
+              color: Colors.black),
+            ),
+            ],
+            ),
+            ),
+          ],
+          ),
+          const SizedBox(height: 6),
+          Row(
+          children: [
+            Icon(Icons.calendar_today, color: Colors.blueGrey, size: 24),
+            const SizedBox(width: 8),
+            RichText(
+            text: TextSpan(
+            text: 'Date Joined: ',
+            style: GoogleFonts.poppins(
+              fontWeight: FontWeight.bold, color: Colors.black),
+            children: [
+            TextSpan(
+              text: DateFormat('MMM dd, yyyy  hh:mm a')
+              .format(widget.attendee.datetimestamp),
+              style: GoogleFonts.poppins(
+              fontWeight: FontWeight.normal,
+              color: Colors.black),
+            ),
+            ],
+            ),
+            ),
+          ],
+          ),
+          ],
+          ),
         ),
+        ),
+      ],
+      ),
       ),
     );
   }
