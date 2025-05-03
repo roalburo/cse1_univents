@@ -65,64 +65,58 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget getDataWidget() {
     if (selectedIndex == 0) {
-      return Expanded(
-        child: GridView.builder(
-          padding: EdgeInsets.all(8),
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 700,
-            mainAxisExtent: 300,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 24,
-            childAspectRatio: 1,
-          ),
-          itemCount: organizations.length,
-          itemBuilder: (context, index) {
-            final org = organizations[index];
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: OrganizationCard(org: org),
-            );
-          },
+      return GridView.builder(
+        padding: EdgeInsets.all(8),
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 700,
+          mainAxisExtent: 300,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 24,
+          childAspectRatio: 1,
         ),
+        itemCount: organizations.length,
+        itemBuilder: (context, index) {
+          final org = organizations[index];
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: OrganizationCard(org: org),
+          );
+        },
       );
     } else if (selectedIndex == 1) {
-      return Expanded(
-        child: GridView.builder(
-          padding: EdgeInsets.all(8),
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 500,
-            mainAxisExtent: 300,
-            crossAxisSpacing: 12,
-            mainAxisSpacing: 24,
-            childAspectRatio: 1,
-          ),
-          itemCount: events.length,
-          itemBuilder: (context, index) {
-            final event = events[index];
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: EventCard(event: event),
-            );
-          },
+      return GridView.builder(
+        padding: EdgeInsets.all(8),
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 500,
+          mainAxisExtent: 300,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 24,
+          childAspectRatio: 1,
         ),
+        itemCount: events.length,
+        itemBuilder: (context, index) {
+          final event = events[index];
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: EventCard(event: event),
+          );
+        },
       );
     } else {
-      return Expanded(
-        child: GridView.builder(
-          padding: const EdgeInsets.all(8),
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            maxCrossAxisExtent: 400, // maximum width for a card
-            mainAxisExtent: 200,
-            mainAxisSpacing: 24,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1, // optional fine-tuning (but less important here)
-          ),
-          itemCount: attendees.length,
-          itemBuilder: (context, index) {
-            final att = attendees[index];
-            return AttendeeCard(attendee: att);
-          },
+      return GridView.builder(
+        padding: const EdgeInsets.all(8),
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 400,
+          mainAxisExtent: 200,
+          mainAxisSpacing: 24,
+          crossAxisSpacing: 12,
+          childAspectRatio: 1,
         ),
+        itemCount: attendees.length,
+        itemBuilder: (context, index) {
+          final att = attendees[index];
+          return AttendeeCard(attendee: att);
+        },
       );
     }
   }
@@ -203,13 +197,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Text(
-          toggleTitles[index],
-          style: GoogleFonts.poppins(
-            fontSize: 18,
-            fontWeight: FontWeight.w500,
-            color: isSelectedNow ? Colors.blue[900] : Colors.black,
-            letterSpacing: isSelectedNow ? 1.5 : 1.0,
-          ),
+                toggleTitles[index],
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: isSelectedNow ? Colors.blue[900] : Colors.black,
+                  letterSpacing: isSelectedNow ? 1.5 : 1.0,
+                ),
               ),
             );
           }),
@@ -228,8 +222,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       ],
     ),
-
-
     endDrawer: Drawer(
       child: SafeArea(
         child: Column(
@@ -323,52 +315,64 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     ),
 
-
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Padding(
-              padding: const EdgeInsets.only(left: 9.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                Text(
-                  toggleTitles[selectedIndex],
-                  style: GoogleFonts.poppins(
+    body: Padding(
+    padding: EdgeInsets.all(16),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 9.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                toggleTitles[selectedIndex],
+                style: GoogleFonts.poppins(
                   fontSize: 35,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,
                   foreground: Paint()
                     ..shader = LinearGradient(
-                    colors: [Colors.black, Colors.blue[900]!],
+                      colors: [Colors.black, Colors.blue[900]!],
                     ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+                ),
+              ),
+              SizedBox(height: 4),
+              Container(
+                height: 3,
+                width: 350,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.black, Colors.blue[900]!],
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
                   ),
                 ),
-                SizedBox(height: 4), // Add a small gap between text and underline
-                Container(
-                  height: 3,
-                    width: 350, // Adjust the width of the underline as needed
-                    decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [Colors.black, Colors.blue[900]!],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                    ),
-                ),
-                ],
               ),
-              ),
-            ),
-            SizedBox(height: 20),
-            getDataWidget(),
-            SizedBox(height: 20),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+        SizedBox(height: 20),
+        Expanded(child: getDataWidget()), // Wrap getDataWidget in Expanded here
+        SizedBox(height: 20),
+      ],
+    ),
+  ),
+  floatingActionButton: selectedIndex < 2
+      ? FloatingActionButton(
+        onPressed: () {
+          if (selectedIndex == 0) {
+            Navigator.pushNamed(context, '/orgs');
+          } else if (selectedIndex == 1) {
+            Navigator.pushNamed(context, '/events');
+          }
+        },
+        backgroundColor: Colors.blue[900],
+        shape: CircleBorder(),
+        tooltip: selectedIndex == 0 ? 'Add Organization' : 'Add Event',
+        child: Icon(Icons.add, color: Colors.white,),
+      )
+      : null,
+  );
   }
 }
