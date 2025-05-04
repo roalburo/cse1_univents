@@ -1,3 +1,5 @@
+import 'package:cse1_univents/main.dart';
+import 'package:http/http.dart' as http;
 import 'dart:typed_data';
 import 'package:image_picker_web/image_picker_web.dart';
 import 'package:cse1_univents/src/models/organization_model.dart';
@@ -13,7 +15,6 @@ class OrganizationsScreen extends StatefulWidget {
   @override
   State<OrganizationsScreen> createState() => _OrganizationsScreenState();
 }
-
 extension StringCapitalization on String {
   String capitalize() {
     if (this.isEmpty) {
@@ -22,7 +23,6 @@ extension StringCapitalization on String {
     return this[0].toUpperCase() + this.substring(1);
   }
 }
-
 class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final _formKey = GlobalKey<FormState>();
@@ -43,8 +43,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    // Fetch organizations when the screen is initialized
-    Future.microtask(() => context.read<DataProvider>().fetchOrgs());
+    Future.microtask(() => context.read<DataProvider>().fetchOrgs()); // Fetch organizations when the screen is initialized
   }
 
   @override
@@ -65,51 +64,40 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
         imageBytes,
         fileOptions: const FileOptions(upsert: true),
       );
-
       // Log the result
       print('📦 Upload response: $response');
       if (response.isEmpty) {
         print("⚠️ Upload failed — empty response");
         return null;
       }
-
       // Get the public URL
       final publicUrl = storage.getPublicUrl(filePath);
-      print('✅ Public image URL: $publicUrl');
-
+      print('Public image URL: $publicUrl');
       return publicUrl;
     } catch (e) {
-      print('❌ Error uploading image: $e');
+      print('Error uploading image: $e');
       return null;
     }
   }
 
   Future<void> _submitOrg() async {
     if (!_formKey.currentState!.validate()) return;
-
-    // ✅ Require both logo and banner before proceeding
-    if (_logoBytes == null || _bannerBytes == null) {
+    // Require both logo and banner before proceeding for new orgs
+    if ((_logoBytes == null || _bannerBytes == null) && _editingUid == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please upload both logo and banner images.')),
+        const SnackBar(content: Text('Please upload both logo and banner images.')),
       );
       return;
     }
 
-    final supabase = Supabase.instance.client;
-
-    // ✅ Upload images to correct folders and get public URLs
+    // Upload images to correct folders and get public URLs
     String? logoUrl, bannerUrl;
     if (_logoBytes != null && _logoFileName != null) {
-      print("Uploading logo...");
       logoUrl = await _uploadImage(_logoBytes!, _logoFileName!, 'org_logos');
-      print("Logo uploaded: $logoUrl");
     }
     if (_bannerBytes != null && _bannerFileName != null) {
-      print("Uploading banner...");
       bannerUrl = await _uploadImage(_bannerBytes!, _bannerFileName!, 'org_banners');
-      print("Banner uploaded: $bannerUrl");
     }
-
     final map = {
       'acronym': _controllers['acronym']!.text,
       'name': _controllers['name']!.text,
@@ -118,41 +106,31 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
       'mobile': _controllers['mobile']!.text,
       'facebook': _controllers['facebook']!.text,
       'status': _status,
-      'logo': logoUrl,
-      'banner': bannerUrl,
     };
-
-    print("Submitting organization data: $map");
-
+    if (logoUrl != null) map['logo'] = logoUrl;
+    if (bannerUrl != null) map['banner'] = bannerUrl;
     try {
       if (_editingUid == null) {
-        print("Inserting new organization...");
         final response = await supabase.from('organizations').insert(map).select();
 
         if (response == null || response is! List || response.isEmpty) {
-          print("Insert failed: unexpected response format");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to insert organization.')),
           );
           return;
         }
-
         print("Insert successful: $response");
       } else {
-        print("Updating organization with UID: $_editingUid");
         final response = await supabase.from('organizations').update(map).eq('uid', _editingUid!).select();
 
         if (response == null || response is! List || response.isEmpty) {
-          print("Update failed: unexpected response format");
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to update organization.')),
           );
           return;
         }
-
         print("Update successful: $response");
       }
-
       _clearForm();
       await context.read<DataProvider>().fetchOrgs();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Organization saved.')));
@@ -177,7 +155,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
     await context.read<DataProvider>().fetchOrgs();
   }
 
-  void _loadOrgForEditing(Organization org) {
+  void _loadOrgForEditing(Organization org) async {
     _controllers['acronym']!.text = org.acronym;
     _controllers['name']!.text = org.name;
     _controllers['category']!.text = org.category;
@@ -186,6 +164,24 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
     _controllers['facebook']!.text = org.facebook;
     _status = org.status;
     _editingUid = org.uid;
+
+    if (org.logo.isNotEmpty) { // Load logo
+      final response = await http.get(Uri.parse(org.logo));
+      if (response.statusCode == 200) {
+        _logoBytes = response.bodyBytes;
+        _logoFileName = org.logo.split('/').last;
+      }
+    }
+    
+    if (org.banner.isNotEmpty) { // Load banner
+      final response = await http.get(Uri.parse(org.banner));
+      if (response.statusCode == 200) {
+        _bannerBytes = response.bodyBytes;
+        _bannerFileName = org.banner.split('/').last;
+      }
+    }
+
+    setState(() {});
     _tabController.animateTo(0);
   }
 
@@ -194,7 +190,6 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
     final info = await ImagePickerWeb.getImageInfo();
 
     if (mediaData != null && info != null) {
-      print("Image picked: ${info.fileName}");
       setState(() {
         if (isLogo) {
           _logoBytes = mediaData;
@@ -231,18 +226,38 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
                   Row(
                     children: [
                       Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () => _pickImage(true),
-                          icon: Icon(Icons.image),
-                          label: Text(_logoBytes == null ? 'Pick Logo' : 'Logo Picked'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (_logoBytes != null)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Image.memory(_logoBytes!, height: 150,),
+                              ),
+                            ElevatedButton.icon(
+                              onPressed: () => _pickImage(true),
+                              icon: Icon(Icons.image),
+                              label: Text(_logoBytes == null ? 'Pick Logo' : 'Logo Picked'),
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(width: 10),
                       Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: () => _pickImage(false),
-                          icon: Icon(Icons.image),
-                          label: Text(_bannerBytes == null ? 'Pick Banner' : 'Banner Picked'),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (_bannerBytes != null)
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Image.memory(_bannerBytes!, height: 150,),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: () => _pickImage(false),
+                              icon: Icon(Icons.image),
+                              label: Text(_bannerBytes == null ? 'Pick Banner' : 'Banner Picked'),
+                            ),
+                          ],
                         ),
                       ),
                     ],

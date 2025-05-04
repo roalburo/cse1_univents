@@ -1,5 +1,4 @@
 import 'package:cse1_univents/src/services/data_provider.dart';
-import 'package:cse1_univents/src/views/attendees.dart';
 import 'package:cse1_univents/src/views/dashboard.dart';
 import 'package:cse1_univents/src/views/events.dart';
 import 'package:cse1_univents/src/views/login.dart';
@@ -42,7 +41,6 @@ class MyApp extends StatelessWidget {
         '/dashboard': (_) => DashboardScreen(),
         '/orgs': (_) => OrganizationsScreen(),
         '/events': (_) => EventsScreen(),
-        '/attendees': (_) => AttendeesScreen(),
       },
     );
   }

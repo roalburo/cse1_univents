@@ -272,16 +272,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Navigator.pushNamed(context, '/events');
                     },
                   ),
-                  ListTile(
-                    leading: Icon(Icons.people, color: Colors.blueGrey),
-                    title: Text(
-                      'Attendees',
-                      style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),   
-                    ),
-                    onTap: () {
-                      Navigator.pushNamed(context, '/attendees');
-                    },
-                  ),
+                  // ListTile(
+                  //   leading: Icon(Icons.people, color: Colors.blueGrey),
+                  //   title: Text(
+                  //     'Attendees',
+                  //     style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),   
+                  //   ),
+                  //   onTap: () {
+                  //     Navigator.pushNamed(context, '/attendees');
+                  //   },
+                  // ),
                 ],
               ),
             ),
