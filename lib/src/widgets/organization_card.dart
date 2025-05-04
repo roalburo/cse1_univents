@@ -51,7 +51,7 @@ class OrganizationCard extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                 BoxShadow(
-                  color: const Color.fromARGB(204, 0, 0, 0), // White glow
+                  color: const Color.fromARGB(204, 0, 0, 0), 
                   blurRadius: 10,
                   spreadRadius: 2,
                 ),

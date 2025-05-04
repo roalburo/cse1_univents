@@ -205,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                             SizedBox(width: 10),                       
-                            Image.asset("assets/google.png", width: 30, height: 30),           
+                            Image.asset("assets/google.png", width: 30, height: 30),                 
                           ],
                         )
                       ),

@@ -121,6 +121,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     final toggleTitles = ['ORGANIZATIONS', 'EVENTS', 'ATTENDEES'];
@@ -142,38 +143,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       actions: [
-        AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          width: isExpanded ? 200 : 40,
-          height: 30,
-          child: Row(
-            children: [
-              Expanded(
-                child: isExpanded
-                    ? TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        hintStyle: GoogleFonts.poppins(fontSize: 14),
-                        contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                        border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      )
-                    : SizedBox.shrink(),
-              ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isExpanded = !isExpanded;
-                  });
-                },
-                child: Icon(Icons.search),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(width: 16), // spacing between search and toggle buttons
+        SizedBox(width: 20), // spacing between search and toggle buttons
         ToggleButtons(
           borderWidth: 0,
           borderColor: Colors.transparent,
@@ -255,7 +225,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ListTile(
                     leading: Icon(Icons.business, color: Colors.blueGrey),
                     title: Text(
-                      'Organizations',
+                      'Add Organization',
                       style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                     onTap: () {
@@ -265,7 +235,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ListTile(
                     leading: Icon(Icons.event, color: Colors.blueGrey),
                     title: Text(
-                      'Events',
+                      'Add Event',
                       style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
                     ),
                     onTap: () {
@@ -359,19 +329,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ),
   ),
   floatingActionButton: selectedIndex < 2
-      ? FloatingActionButton(
-        onPressed: () {
-          if (selectedIndex == 0) {
-            Navigator.pushNamed(context, '/orgs');
-          } else if (selectedIndex == 1) {
-            Navigator.pushNamed(context, '/events');
-          }
-        },
-        backgroundColor: Colors.blue[900],
-        shape: CircleBorder(),
-        tooltip: selectedIndex == 0 ? 'Add Organization' : 'Add Event',
-        child: Icon(Icons.add, color: Colors.white,),
-      )
+      ? Container(
+          width: 70,
+          height: 70,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(
+              colors: [Colors.black, Colors.blue[900]!],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            border: Border.all(color: Colors.white, width: 3), // white border
+          ),
+          child: FloatingActionButton(
+            onPressed: () {
+              if (selectedIndex == 0) {
+                Navigator.pushNamed(context, '/orgs');
+              } else if (selectedIndex == 1) {
+                Navigator.pushNamed(context, '/events');
+              }
+            },
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            shape: CircleBorder(),
+            tooltip: selectedIndex == 0 ? 'Add Organization' : 'Add Event',
+            child: Icon(Icons.add, color: Colors.white, size: 30),
+          ),
+        )
       : null,
   );
   }
