@@ -81,11 +81,14 @@ class _AttendeeCardState extends State<AttendeeCard> {
       color: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Container(
+        constraints: BoxConstraints(
+        maxHeight: 220, // Adjust as needed to fit your layout
+      ),
       decoration: BoxDecoration(
-      gradient: LinearGradient(
-      colors: [Colors.white, Colors.blueGrey[50]!],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
+        gradient: LinearGradient(
+          colors: [Colors.white, Colors.blueGrey[50]!],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
       ),
       borderRadius: BorderRadius.circular(12),
       ),
@@ -103,7 +106,7 @@ class _AttendeeCardState extends State<AttendeeCard> {
         ),
         SizedBox(width: 8),
         Expanded(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(14),
           child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,47 +132,63 @@ class _AttendeeCardState extends State<AttendeeCard> {
           ),
           const SizedBox(height: 14),
           Row(
-          children: [
-            Icon(Icons.person, color: Colors.blueGrey, size: 24),
-            const SizedBox(width: 8),
-            RichText(
-            text: TextSpan(
-            text: 'Attendee: ',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold, color: Colors.black),
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            TextSpan(
-              text: isLoading ? "Loading name..." : fullName,
-              style: GoogleFonts.poppins(
-              fontWeight: FontWeight.normal,
-              color: Colors.black),
-            ),
+              Icon(Icons.person, color: Colors.blueGrey, size: 24),
+              const SizedBox(width: 8),
+              Flexible(
+                child: RichText(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  text: TextSpan(
+                    text: 'Attendee: ',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: isLoading ? "Loading name..." : fullName,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
-            ),
-            ),
-          ],
           ),
           const SizedBox(height: 6),
           Row(
-          children: [
-            Icon(Icons.event, color: Colors.blueGrey, size: 24),
-            const SizedBox(width: 8),
-            RichText(
-            text: TextSpan(
-            text: 'Event Joined: ',
-            style: GoogleFonts.poppins(
-              fontWeight: FontWeight.bold, color: Colors.black),
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            TextSpan(
-              text: isLoading ? "Loading event..." : eventName,
-              style: GoogleFonts.poppins(
-              fontWeight: FontWeight.normal,
-              color: Colors.black),
-            ),
+              Icon(Icons.event, color: Colors.blueGrey, size: 24),
+              const SizedBox(width: 8),
+              Flexible(
+                child: RichText(
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  text: TextSpan(
+                    text: 'Event Joined: ',
+                    style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                    children: [
+                      TextSpan(
+                        text: isLoading ? "Loading event..." : eventName,
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.normal,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
-            ),
-            ),
-          ],
           ),
           const SizedBox(height: 6),
           Row(

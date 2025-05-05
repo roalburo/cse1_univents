@@ -204,104 +204,331 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
 
   @override
   Widget build(BuildContext context) {
+  Size screenSize = MediaQuery.of(context).size;
+
     final orgs = context.watch<DataProvider>().orgs ?? [];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Organizations', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        toolbarHeight: 100,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Manage Organizations',
+              style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.bold, 
+                  fontSize: 35,
+                  foreground: Paint()
+                    ..shader = LinearGradient(
+                      colors: [Colors.black, Colors.blue[900]!],
+                    ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),)),
+            SizedBox(height: 5),
+            Container(
+              height: 3,
+              width: 500,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black, Colors.blue[900]!],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
+          ],
+        ),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [Tab(text: 'Add/Edit'), Tab(text: 'Manage')],
+          tabs: const [Tab(text: 'ADD/EDIT'), Tab(text: 'MANAGE')],
+          labelColor: Colors.blue[900], // Optional: overrides default color
+          unselectedLabelColor: Colors.black,
+          labelStyle: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1.5,
+          ),
+          unselectedLabelStyle: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1.0,
+          ),
+          indicator: BoxDecoration(),         
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (_logoBytes != null)
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                child: Image.memory(_logoBytes!, height: 150,),
-                              ),
-                            ElevatedButton.icon(
-                              onPressed: () => _pickImage(true),
-                              icon: Icon(Icons.image),
-                              label: Text(_logoBytes == null ? 'Pick Logo' : 'Logo Picked'),
-                            ),
-                          ],
-                        ),
+      body: Container(
+          decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/ccfc.jpg"),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.darken,
+            ),
+          ),
+        ),
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  width: screenSize.width * 0.3,
+                  height: screenSize.height * 0.65,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.lightBlueAccent,
+                        Colors.blue[900]!,
+                      ],
                       ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (_bannerBytes != null)
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8),
-                                child: Image.memory(_bannerBytes!, height: 150,),
-                            ),
-                            ElevatedButton.icon(
-                              onPressed: () => _pickImage(false),
-                              icon: Icon(Icons.image),
-                              label: Text(_bannerBytes == null ? 'Pick Banner' : 'Banner Picked'),
-                            ),
-                          ],
-                        ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
                       ),
                     ],
                   ),
-                  ..._controllers.entries.map((e) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: TextFormField(
-                      controller: e.value,
-                      decoration: InputDecoration(labelText: e.key.capitalize(), border: OutlineInputBorder()),
-                      validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      if (_logoBytes != null)
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 8),
+                                          child: Image.memory(_logoBytes!, height: 150,),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () => _pickImage(true),
+                                          style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            backgroundColor: Colors.transparent,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                            elevation: 4,
+                                            shadowColor: Colors.black45,
+                                          ),
+                                          child: Ink(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [Colors.black, Colors.blue[900]!],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                              ),
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Container(
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                              alignment: Alignment.center,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.image, color: Colors.white),
+                                                  SizedBox(width: 8),
+                                                  Text(
+                                                    _logoBytes == null ? 'Pick Logo' : 'Logo Picked',
+                                                    style: GoogleFonts.poppins(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+        
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      if (_bannerBytes != null)
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 8),
+                                          child: Image.memory(_bannerBytes!, height: 150,),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () => _pickImage(false),
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          backgroundColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                          elevation: 4,
+                                          shadowColor: Colors.black45,
+                                        ),
+                                        child: Ink(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [Colors.black, Colors.blue[900]!],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                            alignment: Alignment.center,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.image, color: Colors.white),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  _bannerBytes == null ? 'Pick Banner' : 'Banner Picked',
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+        
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                            ..._controllers.entries.map((e) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: TextFormField(
+                                controller: e.value,
+                                style: GoogleFonts.poppins(color: Colors.white),
+                                decoration: InputDecoration(
+                                  labelText: e.key.capitalize(),
+                                  labelStyle: GoogleFonts.poppins(color: Colors.white),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white, width: 2.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white, width: 3.0),
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white),
+                                  ),
+                                  hintStyle: TextStyle(color: Colors.white70), // in case you use hintText
+                                ),
+                                validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                              ),
+                            )),
+                            SizedBox(height: 20),
+                            SwitchListTile(
+                              title: Text('Active Status', style: GoogleFonts.poppins(color: Colors.white),),
+                              value: _status,
+                              activeColor: Colors.lightGreenAccent,
+                              inactiveThumbColor: Colors.white, 
+                              inactiveTrackColor: Colors.grey[600], 
+                              onChanged: (v) => setState(() => _status = v),
+                            ),
+                            SizedBox(height: 20),
+                            ElevatedButton(
+                              onPressed: _submitOrg,
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                backgroundColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                elevation: 4,
+                                shadowColor: Colors.black45,
+                              ),
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [Colors.black, Colors.blue[900]!],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Container(
+                                  width: screenSize.width * 0.5,
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(Icons.business, color: Colors.white),
+                                      SizedBox(width: 8),
+                                      Text(
+                                        _editingUid == null ? 'Add Organization' : 'Update Organization',
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 20),
+                          ],
+                        ),
+                      ),
                     ),
-                  )),
-                  SwitchListTile(
-                    title: Text('Active Status'),
-                    value: _status,
-                    onChanged: (v) => setState(() => _status = v),
                   ),
-                  ElevatedButton(
-                    onPressed: _submitOrg,
-                    child: Text(_editingUid == null ? 'Add Organization' : 'Update Organization'),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-          ListView.builder(
-            itemCount: orgs.length,
-            itemBuilder: (context, index) {
-              final org = orgs[index];
-              return ListTile(
-                leading: CircleAvatar(backgroundImage: NetworkImage(org.logo ?? '')),
-                title: Text(org.name),
-                subtitle: Text(org.acronym),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(icon: Icon(Icons.edit), onPressed: () => _loadOrgForEditing(org)),
-                    IconButton(icon: Icon(Icons.delete, color: Colors.red), onPressed: () => _deleteOrg(org.uid!)),
-                  ],
+            ListView.builder(
+              itemCount: orgs.length,
+              itemBuilder: (context, index) {
+                final org = orgs[index];
+                return ListTile(
+                leading: Container(
+                  width: 50, // or your preferred size
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color.fromARGB(204, 0, 0, 0),
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                    image: DecorationImage(
+                      image: NetworkImage(org.logo ?? ''),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              );
-            },
-          ),
-        ],
+                  title: Text(org.name, style: GoogleFonts.poppins(color:Colors.white),),
+                  subtitle: Text(org.acronym, style: GoogleFonts.poppins(color:Colors.white),),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(icon: Icon(Icons.edit, color: Colors.lightGreenAccent), onPressed: () => _loadOrgForEditing(org)),
+                      IconButton(icon: Icon(Icons.delete, color: Colors.red), onPressed: () => _deleteOrg(org.uid!)),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

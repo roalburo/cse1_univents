@@ -223,115 +223,372 @@ class _EventsScreenState extends State<EventsScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
     final events = context.watch<DataProvider>().events ?? [];
     final orgs = context.watch<DataProvider>().orgs ?? [];
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Events', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+        toolbarHeight: 100,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Manage Events',
+              style: GoogleFonts.poppins(
+                fontWeight: FontWeight.bold,
+                fontSize: 35,
+                foreground: Paint()
+                  ..shader = LinearGradient(
+                    colors: [Colors.black, Colors.blue[900]!],
+                  ).createShader(Rect.fromLTWH(0.0, 0.0, 200.0, 70.0)),
+              ),
+            ),
+            const SizedBox(height: 5),
+            Container(
+              height: 3,
+              width: 500,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.black, Colors.blue[900]!],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+            ),
+          ],
+        ),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [Tab(text: 'Add/Edit'), Tab(text: 'Manage')],
+          tabs: const [Tab(text: 'ADD/EDIT'), Tab(text: 'MANAGE')],
+          labelColor: Colors.blue[900],
+          unselectedLabelColor: Colors.black,
+          labelStyle: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1.5,
+          ),
+          unselectedLabelStyle: GoogleFonts.poppins(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            letterSpacing: 1.0,
+          ),
+          indicator: const BoxDecoration(),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  if (_bannerBytes != null)
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Image.memory(_bannerBytes!, height: 150),
-                    ),
-                  ElevatedButton.icon(
-                    onPressed: _pickImage,
-                    icon: Icon(Icons.image),
-                    label: Text(_bannerBytes == null ? 'Pick Banner' : 'Banner Picked'),
-                  ),
-                  SizedBox(height: 16),
-                  DropdownButtonFormField<String>(
-                    value: _selectedOrgUid,
-                    items: orgs.map((org) {
-                      return DropdownMenuItem(value: org.uid, child: Text(org.name));
-                    }).toList(),
-                    onChanged: (value) => setState(() => _selectedOrgUid = value),
-                    decoration: InputDecoration(
-                      labelText: 'Organization',
-                      border: OutlineInputBorder(),
-                    ),
-                    validator: (value) => value == null ? 'Required' : null,
-                  ),
-                  ..._controllers.entries.map((e) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: TextFormField(
-                      controller: e.value,
-                      decoration: InputDecoration(labelText: e.key.capitalize(), border: OutlineInputBorder()),
-                      validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-                    ),
-                  )),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ListTile(
-                          title: Text(_datetimeStart == null ? 'Select Start' : _datetimeStart.toString()),
-                          trailing: Icon(Icons.calendar_today),
-                          onTap: () => _selectDateTime(true),
-                        ),
+      body: Container(
+          decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/ccfc.jpg"),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.5), BlendMode.darken,
+            ),
+          ),
+        ),
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  width: screenSize.width * 0.3,
+                  height: screenSize.height * 0.7,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.lightBlueAccent,
+                        Colors.blue[900]!,
+                      ],
                       ),
-                      Expanded(
-                        child: ListTile(
-                          title: Text(_datetimeEnd == null ? 'Select End' : _datetimeEnd.toString()),
-                          trailing: Icon(Icons.calendar_today),
-                          onTap: () => _selectDateTime(false),
-                        ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                        offset: Offset(0, 3), // changes position of shadow
                       ),
                     ],
                   ),
-                  DropdownButtonFormField<String>(
-                    value: _status,
-                    decoration: InputDecoration(labelText: 'Status', border: OutlineInputBorder()),
-                    items: ['active', 'pending', 'done']
-                      .map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-                    onChanged: (value) => setState(() => _status = value),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      if (_bannerBytes != null)
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(vertical: 8),
+                                          child: Image.memory(_bannerBytes!, height: 150),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: _pickImage,
+                                          style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.zero,
+                                            backgroundColor: Colors.transparent,
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                            elevation: 4,
+                                            shadowColor: Colors.black45,
+                                          ),
+                                          child: Ink(
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [Colors.black, Colors.blue[900]!],
+                                                begin: Alignment.topLeft,
+                                                end: Alignment.bottomRight,
+                                              ),
+                                              borderRadius: BorderRadius.circular(20),
+                                            ),
+                                            child: Container(
+                                              width: double.infinity,
+                                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                                              alignment: Alignment.center,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(Icons.image, color: Colors.white),
+                                                  SizedBox(width: 8),
+                                                  Text(
+                                                    _bannerBytes == null ? 'Pick Banner' : 'Banner Picked',
+                                                    style: GoogleFonts.poppins(
+                                                      color: Colors.white,
+                                                      fontWeight: FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                      SizedBox(height: 20),
+                                      DropdownButtonFormField<String>(
+                                        value: _selectedOrgUid,
+                                        dropdownColor: Colors.black, // Dropdown menu background
+                                        decoration: InputDecoration(
+                                          labelText: 'Organization',
+                                          labelStyle: GoogleFonts.poppins(color: Colors.white),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.white, width: 2.0),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.white, width: 3.0),
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.white),
+                                          ),
+                                        ),
+                                        iconEnabledColor: Colors.white,
+                                        style: GoogleFonts.poppins(color: Colors.white), // Text style of selected item
+                                        items: orgs.map((org) {
+                                          return DropdownMenuItem(
+                                            value: org.uid,
+                                            child: Text(
+                                              org.name,
+                                              style: GoogleFonts.poppins(color: Colors.white), // Text style in dropdown list
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) => setState(() => _selectedOrgUid = value),
+                                        validator: (value) => value == null ? 'Required' : null,
+                                      ),
+
+                                      SizedBox(height: 20),
+                                      ..._controllers.entries.map((e) => Padding(
+                                        padding: const EdgeInsets.symmetric(vertical: 8),
+                                        child: TextFormField(
+                                          controller: e.value,
+                                          style: GoogleFonts.poppins(color: Colors.white),
+                                          decoration: InputDecoration(
+                                            labelText: e.key.capitalize(),
+                                            labelStyle: GoogleFonts.poppins(color: Colors.white),
+                                            enabledBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.white, width: 2.0),
+                                            ),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.white, width: 3.0),
+                                            ),
+                                            border: OutlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.white),
+                                            ),
+                                            hintStyle: TextStyle(color: Colors.white70),
+                                          ),
+                                          validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                                        ),                                    
+                                      )),
+                                      SizedBox(height: 20),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: ListTile(
+                                              title: Text(
+                                                _datetimeStart == null ? 'Select Start' : _datetimeStart.toString(),
+                                                style: GoogleFonts.poppins(color: Colors.white),
+                                              ),
+                                              trailing: Icon(Icons.calendar_today, color: Colors.white),
+                                              onTap: () => _selectDateTime(true),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: ListTile(
+                                              title: Text(
+                                                _datetimeEnd == null ? 'Select End' : _datetimeEnd.toString(),
+                                                style: GoogleFonts.poppins(color: Colors.white),
+                                              ),
+                                              trailing: Icon(Icons.calendar_today, color: Colors.white),
+                                              onTap: () => _selectDateTime(false),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 20),
+                                      DropdownButtonFormField<String>(
+                                        value: _status,
+                                        dropdownColor: Colors.black, // Optional: background of dropdown menu
+                                        decoration: InputDecoration(
+                                          labelText: 'Status',
+                                          labelStyle: GoogleFonts.poppins(color: Colors.white),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.white, width: 2.0),
+                                          ),
+                                          focusedBorder: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.white, width: 3.0),
+                                          ),
+                                          border: OutlineInputBorder(
+                                            borderSide: BorderSide(color: Colors.white),
+                                          ),
+                                        ),
+                                        iconEnabledColor: Colors.white,
+                                        style: GoogleFonts.poppins(color: Colors.white),
+                                        items: ['active', 'pending', 'done'].map(
+                                          (s) => DropdownMenuItem(
+                                            value: s,
+                                            child: Text(
+                                              s,
+                                              style: GoogleFonts.poppins(color: Colors.white),
+                                            ),
+                                          ),
+                                        ).toList(),
+                                        onChanged: (value) => setState(() => _status = value),
+                                        validator: (value) => value == null ? 'Required' : null,
+                                      ),
+
+                                      SizedBox(height: 20),
+                                      ElevatedButton(
+                                        onPressed: _submitEvent,
+                                        style: ElevatedButton.styleFrom(
+                                          padding: EdgeInsets.zero,
+                                          backgroundColor: Colors.transparent,
+                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                          elevation: 4,
+                                          shadowColor: Colors.black45,
+                                        ),
+                                        child: Ink(
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              colors: [Colors.black, Colors.blue[900]!],
+                                              begin: Alignment.topLeft,
+                                              end: Alignment.bottomRight,
+                                            ),
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          child: Container(
+                                            width: screenSize.width * 0.5,
+                                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Icon(Icons.event, color: Colors.white),
+                                                SizedBox(width: 8),
+                                                Text(
+                                                  _editingUid == null ? 'Add Event' : 'Update Event',
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: _submitEvent,
-                    child: Text(_editingUid == null ? 'Add Event' : 'Update Event'),
-                  ),
-                ],
+                ),
               ),
             ),
-          ),
-          ListView.builder(
-            itemCount: events.length,
-            itemBuilder: (context, index) {
-              final event = events[index];
-              return ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: event.banner != null && event.banner!.isNotEmpty
-                  ? NetworkImage(event.banner)
-                  : null,
-                  child: event.banner == null || event.banner!.isEmpty
-                  ? Icon(Icons.image_not_supported)
-                  : null,
+            ListView.builder(
+              itemCount: events.length,
+              itemBuilder: (context, index) {
+                final event = events[index];
+                return ListTile(
+                  leading: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color.fromARGB(204, 0, 0, 0),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                      image: event.banner != null && event.banner!.isNotEmpty
+                          ? DecorationImage(
+                              image: NetworkImage(event.banner!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
+                    ),
+                    child: event.banner == null || event.banner!.isEmpty
+                        ? Icon(Icons.image_not_supported, color: Colors.white)
+                        : null,
                   ),
-                title: Text(event.title ?? ''),
-                subtitle: Text(event.location ?? ''),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(icon: Icon(Icons.edit), onPressed: () => _loadEventForEditing(event)),
-                    IconButton(icon: Icon(Icons.delete, color: Colors.red), onPressed: () => _deleteEvent(event.uid)),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
+                  title: Text(event.title ?? '', style: GoogleFonts.poppins(color: Colors.white)),
+                  subtitle: Text(event.location ?? '', style: GoogleFonts.poppins(color: Colors.white70)),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.edit, color: Colors.lightGreenAccent),
+                        onPressed: () => _loadEventForEditing(event),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _deleteEvent(event.uid),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+          ],
+        ),
       ),
     );
   }
