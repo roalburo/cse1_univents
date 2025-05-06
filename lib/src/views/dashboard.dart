@@ -58,7 +58,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final res = await Supabase.instance.client.from('attendees').select();
     if (mounted) {
       setState(() {
-        attendees = (res as List).map((m) => Attendee.fromMap(m)).toList();
+        attendees = (res as List)
+          .map((m) => Attendee.fromMap(m))
+          .where((attendees) => attendees.status == true)
+          .toList();
       });
     }
   }
@@ -242,16 +245,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Navigator.pushNamed(context, '/events');
                     },
                   ),
-                  // ListTile(
-                  //   leading: Icon(Icons.people, color: Colors.blueGrey),
-                  //   title: Text(
-                  //     'Attendees',
-                  //     style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),   
-                  //   ),
-                  //   onTap: () {
-                  //     Navigator.pushNamed(context, '/attendees');
-                  //   },
-                  // ),
                 ],
               ),
             ),

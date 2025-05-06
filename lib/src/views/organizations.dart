@@ -151,8 +151,32 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
   }
 
   Future<void> _deleteOrg(String uid) async {
-    await Supabase.instance.client.from('organizations').delete().eq('uid', uid);
-    await context.read<DataProvider>().fetchOrgs();
+    try {
+      // Check if the organization has linked events
+      final linkedEvents = await Supabase.instance.client
+          .from('events')
+          .select()
+          .eq('organization_uid', uid);
+
+      if (linkedEvents != null && linkedEvents.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('This organization has events and cannot be deleted.')),
+        );
+        return;
+      }
+      // Proceed with deletion if no linked events
+      await Supabase.instance.client.from('organizations').delete().eq('uid', uid);
+      if (mounted) {
+        await context.read<DataProvider>().fetchOrgs();
+      }
+    } catch (e) {
+      print('Error deleting organization: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete organization.')),
+        );
+      }
+    }
   }
 
   void _loadOrgForEditing(Organization org) async {
