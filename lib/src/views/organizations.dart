@@ -152,7 +152,6 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
 
   Future<void> _deleteOrg(String uid) async {
     try {
-      // Check if the organization has linked events
       final linkedEvents = await Supabase.instance.client
           .from('events')
           .select()
@@ -164,7 +163,6 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
         );
         return;
       }
-      // Proceed with deletion if no linked events
       await Supabase.instance.client.from('organizations').delete().eq('uid', uid);
       if (mounted) {
         await context.read<DataProvider>().fetchOrgs();
@@ -189,7 +187,7 @@ class _OrganizationsScreenState extends State<OrganizationsScreen> with SingleTi
     _status = org.status;
     _editingUid = org.uid;
 
-    if (org.logo.isNotEmpty) { // Load logo
+    if (org.logo.isNotEmpty) {
       final response = await http.get(Uri.parse(org.logo));
       if (response.statusCode == 200) {
         _logoBytes = response.bodyBytes;
